@@ -28,7 +28,7 @@ class User extends Authenticatable implements AuthenticatableContract, Authoriza
         'email',
         'email_verified_at',
         'password',
-       
+
     ];
 
     /**
@@ -51,7 +51,7 @@ class User extends Authenticatable implements AuthenticatableContract, Authoriza
         'password' => 'hashed',
     ];
 
-    
+
 
     public function getJWTIdentifier()
     {
@@ -62,6 +62,16 @@ class User extends Authenticatable implements AuthenticatableContract, Authoriza
     {
         return [];
     }
-    
-    
+
+    public function families()
+    {
+        return $this->belongsToMany(Family::class)->withPivot('is_shopper')->withTimestamps();
+    }
+
+    public function orders()
+    {
+        return $this->hasManyThrough(Order::class, Family::class);
+    }
+
+
 }

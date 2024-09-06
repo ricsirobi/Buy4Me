@@ -15,7 +15,7 @@ return new class extends Migration
         $table->id();
         $table->string('name');
         $table->string('address');
-        $table->sring('logo');
+        $table->string('logo');
         $table->timestamps();
     });
 }
