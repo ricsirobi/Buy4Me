@@ -16,13 +16,13 @@ class UserController extends Controller
     public function register(Request $request)
 {
     $request->validate([
-        'username' => 'required|string|max:255',
+        'name' => 'required|string|max:255',
         'email' => 'required|string|email|max:255|unique:users',
         'password' => 'required|string|min:8',
     ]);
 
     $user = User::create([
-        'username' => $request->username,
+        'username' => $request->name,
         'email' => $request->email,
         'password' => Hash::make($request->password),
     ]);
@@ -46,7 +46,7 @@ public function login(Request $request)
         }
 
         $token = JWTAuth::fromUser($user);
-        
+
         return response()->json([
             'access_token' => $token,
         ], 200);
@@ -88,10 +88,10 @@ public function login(Request $request)
         $user->acceptable_missions = $acceptable_missions;
         $user->equipped_items = $equipped_items;
         $user->backpack_items = $backpack_items;
-        
+
         return response()->json([
             'user' => $user,
-             
+
         ]);
     }
 
@@ -117,7 +117,7 @@ public function login(Request $request)
         $user->nanocrystal -= 1;
         $user->fuel += 7200*0.2;
         $user->save();
-        
+
         //todo: tranzakció
         return response()->json([
             'Success' => 'Fuel bought',
@@ -240,7 +240,7 @@ public function login(Request $request)
         $monsterHP = $mission->monster->hp*70*$mission->monster->level;
         $currentAttacker = $user;
         $round_number = 1;
-        
+
         while ($attackerHP > 0 && $monsterHP > 0) {
             $damage = $this->calculateDamage($currentAttacker);
             if ($currentAttacker === $user) {
@@ -268,7 +268,7 @@ public function login(Request $request)
             }
             $round_number++;
         }
-        
+
         $won = null;
         if($attackerHP > 0)
         {
@@ -284,10 +284,10 @@ public function login(Request $request)
             'monsterHP' => $monsterHP,
             'won' => $won,
         ];
-        
-        
+
+
         $this->saveBattleResult($battleResult, $request->missionId);
-        
+
         if($won === $user->id)
         {
             $user->missions()->updateExistingPivot($request->missionId, ['user_won' => 1]);
@@ -320,8 +320,8 @@ public function login(Request $request)
     }
 
     private static function saveBattleResult($battleResults, $missionId)
-    {   
-        
+    {
+
         $rounds = $battleResults['rounds'];
         foreach($rounds as $round)
         {
@@ -396,43 +396,43 @@ public function login(Request $request)
     public function equipItem(Request $request)
     {
         $user = self::authenticateUser($request);
-    
+
         if ($user instanceof \Illuminate\Http\JsonResponse) {
             return $user;
         }
-    
+
         $item = $user->items()->where('item_id', $request->itemId)->first();
-    
+
         if ($item === null) {
             return response()->json([
                 'Error' => 'Item not found',
             ]);
         }
-    
+
         $type = $item->type;
-    
+
         // Ellenőrizze, hogy van-e ugyanolyan típusú, de más helyen felvett elem
         $existingItem = $user->items()->where('type', $type)->where('place', 1)->first();
-    
+
         if ($existingItem !== null) {
             $existingItem->pivot->place = 0;
             $existingItem->pivot->save();
         }
-    
+
         if ($item->pivot->place === 1) {
             return response()->json([
                 'Error' => 'Item already equipped',
             ]);
         }
-    
+
         $user->items()->updateExistingPivot($request->itemId, ['place' => 1]);
         $user->save();
-    
+
         return response()->json([
             'Success' => 'Item equipped',
         ]);
     }
-    
+
     public function unequipItem(Request $request)
     {
         $user = self::authenticateUser($request);
@@ -460,7 +460,7 @@ public function login(Request $request)
         ]);
     }
 
-    
+
     public function buyItem(Request $request)
     {
         $user = self::authenticateUser($request);

@@ -3,7 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\Auth\UserController as ApiUserController;
-
+use App\Http\Controllers\FamilyController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -29,7 +29,13 @@ Route::group(['middleware' => 'jwt.auth'], function () {
     });
 });
 
+
+
 Route::middleware(['auth:api'])->group(function () {
+    Route::post('/family/create', [FamilyController::class, 'create']);
+    Route::post('/family/{familyId}/join', [FamilyController::class, 'join']);
+    Route::get('/family/{familyId}/members', [FamilyController::class, 'members']);
+    route::get('/user/families', [FamilyController::class, 'getUserFamilies']);
   /*  Route::get('/activeUserDetails', [ApiUserController::class, 'getUserDetails']);
     Route::post('/buyFuel', [ApiUserController::class, 'buyFuel']);
     Route::post('/acceptMission', [ApiUserController::class, 'acceptMission']);
