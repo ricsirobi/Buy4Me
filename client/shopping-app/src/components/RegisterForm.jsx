@@ -11,7 +11,7 @@ function RegisterForm() {
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(API_BASE_URL+'register', {
+      const response = await axios.post(API_BASE_URL+'/register', {
         name,
         email,
         password,

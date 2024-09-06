@@ -21,11 +21,8 @@ class DatabaseSeeder extends Seeder
         // ]);
 
         $this->call([
-            ItemsTableSeeder::class,
-            MonstersTableSeeder::class,
-            MissionsTableSeeder::class,
-            LevelsTableSeeder::class,
+            ShopSeeder::class,
         ]);
-        
+
     }
 }
