@@ -7,6 +7,7 @@ import CreateFamily from './components/CreateFamily';
 import JoinFamily from './components/JoinFamily';
 import FamilyMembers from './components/FamilyMembers';
 import OrderForm from './components/OrderForm';
+import OrderList from './components/OrderList';
 
 function App() {
   const token = localStorage.getItem('token');
@@ -69,6 +70,7 @@ function App() {
             <Route path="/family/join" element={token ? <JoinFamily /> : <Navigate to="/login" />} />
             <Route path="/family/members" element={token ? <FamilyMembers familyId={familyId} /> : <Navigate to="/login" />} />
             <Route path="/order/create" element={token ? <OrderForm /> : <Navigate to="/login" />} />
+            <Route path="/orders" element={token ? <OrderList /> : <Navigate to="/login" />} />
 
             {/* Alapértelmezett útvonal */}
             <Route path="*" element={<Navigate to={token ? "/home" : "/login"} />} />

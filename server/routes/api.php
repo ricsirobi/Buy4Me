@@ -41,8 +41,9 @@ Route::middleware(['auth:api'])->group(function () {
 
     route::post('/orders/create', [OrderController::class, 'create']);
     route::post('/orders/{orderId}/add-product', [OrderController::class, 'addProduct']);
-    route::get('/orders', [OrderController::class, 'index']);
+    route::get('/orders', [OrderController::class, 'getOrdersByFamilyId']);
     route::get('/shops', [ShopController::class, 'index']);
+
   /*  Route::get('/activeUserDetails', [ApiUserController::class, 'getUserDetails']);
     Route::post('/buyFuel', [ApiUserController::class, 'buyFuel']);
     Route::post('/acceptMission', [ApiUserController::class, 'acceptMission']);

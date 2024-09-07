@@ -24,4 +24,18 @@ class Order extends Model
     {
         return $this->hasMany(OrderItem::class);
     }
+    public function getProductsAttribute()
+    {
+        $products = [];
+        foreach ($this->items as $item) {
+            $productWithStatus = $item->product;
+            $productWithStatus->status = $item->status;
+            $productWithStatus->quantity = $item->quantity;
+            $products[] = $productWithStatus;
+
+        }
+        return $products;
+    }
+
+
 }

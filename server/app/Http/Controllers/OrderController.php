@@ -1,7 +1,9 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Models\Order;
+use App\Models\OrderItem;
 use App\Models\Product;
 use Illuminate\Http\Request;
 
@@ -33,26 +35,45 @@ class OrderController extends Controller
     // Termék hozzáadása a rendeléshez
     public function addProduct(Request $request, $orderId)
     {
-        $order = Order::find($orderId);
+        //ha még nincs ilye ntermék a megadott névvel akkor hozzáadja
 
-        if (!$order) {
-            return response()->json(['message' => 'Order not found'], 404);
-        }
-
-        $product = Product::create([
-            'name' => $request->name,
-            'quantity' => $request->quantity,
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'quantity' => 'required|integer',
         ]);
 
-        $order->products()->attach($product->id);
+        $product = Product::firstOrCreate([
+            'name' => $request->name,
+        ]);
+        OrderItem::create([
+            'order_id' => $orderId,
+            'product_id' => $product->id,
+            'quantity' => $request->quantity,
+            'status' => 'pending',
+        ]);
 
-        return response()->json(['message' => 'Product added successfully']);
+        return response()->json(['message' => 'Product added successfully', 'product' => $product]);
     }
 
+
     // Rendelések listázása
-    public function index()
+    public function getOrdersByFamilyId()
     {
-        $orders = Order::with('products')->get();
-        return response()->json($orders);
+        $allFamily = auth()->user()->families;
+        $familyIds = $allFamily->pluck('id')->toArray();
+        //ezeket az ordereket a shop adataival együtt kell visszaadni
+        //$orders = Order::whereIn('family_id', $familyIds)->get();
+        //de a family-t is hozzá kell adni 1-1 adathoz
+        $orders = Order::with('shop')->whereIn('family_id', $familyIds)->get();
+        $data = [];
+        foreach ($orders as $order) {
+            $data[] = [
+                'order' =>$order,
+                'shop' => $order->shop,
+                'family' => $order->family,
+                'products' => $order->products,
+            ];
+        }
+        return response()->json($data);
     }
 }

@@ -18,7 +18,7 @@ return new class extends Migration
         $table->integer('quantity');
         $table->string('note')->nullable();
         $table->string('image')->nullable();
-        $table->enum('status', ['in_cart', 'purchased', 'not_available'])->default('in_cart');
+        $table->enum('status', ['pending','in_cart', 'purchased', 'not_available'])->default('in_cart');
         $table->timestamps();
     });
 }
